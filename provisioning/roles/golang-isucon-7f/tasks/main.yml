@@ -4,10 +4,10 @@
 ---
 - name: Run make ensure inside the application
   command:
-    cmd: cd src/app && /home/isucon/go/bin/dep ensure -vendor-only
-    chdir: /home/isucon/isucon-all/webapp/go
+    cmd: /home/isucon/go/bin/dep ensure -vendor-only
+    chdir: /home/isucon/isucon-all/webapp/go/src/app
   environment:
-    GOPATH: /home/isucon/isubata/webapp/go/
+    GOPATH: /home/isucon/isucon-all/webapp/go/
   become: yes
   become_user: isucon
   tags:
@@ -16,9 +16,9 @@
 - name: Build the application
   command:
     cmd: /home/isucon/local/go/bin/go build -v app
-    chdir: /home/isucon/isucon-all/webapp/go
+    chdir: /home/isucon/isucon-all/webapp/go/
   environment:
-    GOPATH: /home/isucon/isubata/webapp/go/
+    GOPATH: /home/isucon/isucon-all/webapp/go/
   become: yes
   become_user: isucon
   tags:
