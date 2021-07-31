@@ -10,3 +10,5 @@
     update: yes
   become: yes
   become_user: isucon
+  tags:
+    - update-repo-from-github
