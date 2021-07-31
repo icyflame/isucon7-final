@@ -6,12 +6,20 @@
   command:
     cmd: make ensure
     chdir: /home/isucon/isucon-all/webapp/go
+  environment:
+    GOPATH: /home/isucon/isubata/webapp/go/
   become: yes
   become_user: isucon
+  tags:
+    - application
 
 - name: Build the application
   command:
     cmd: make build
     chdir: /home/isucon/isucon-all/webapp/go
+  environment:
+    GOPATH: /home/isucon/isubata/webapp/go/
   become: yes
   become_user: isucon
+  tags:
+    - application
