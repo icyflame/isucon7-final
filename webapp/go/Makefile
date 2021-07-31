@@ -1,19 +1,17 @@
 GOPATH := ${PWD}
 export GOPATH
-DEP := /home/isucon/go/bin/dep
-GO := /home/isucon/local/go/bin/go
 
 build:
-		${GO} build -v app
+		go build -v app
 
 ensure:
-		cd src/app && ${DEP} ensure -vendor-only
+		cd src/app && dep ensure -vendor-only
 
 update:
-		cd src/app && ${DEP} ensure
+		cd src/app && dep ensure
 
 test:
-		${GO} test -v app
+		go test -v app
 
 vet:
-		${GO} vet ./src/app/...
+		go vet ./src/app/...
