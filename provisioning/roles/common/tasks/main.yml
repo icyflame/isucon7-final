@@ -28,19 +28,17 @@
     group: root
     mode: 0440
 
+- name: Delete any existing .ssh directory
+  ansible.builtin.file:
+    path: /home/isucon/.ssh
+    state: absent
+  become: yes
+
 - name: Create .ssh
   ansible.builtin.file:
     path: /home/isucon/.ssh
     state: directory
     mode: '0700'
-  become: yes
-  become_user: isucon
-
-- name: Create .ssh/authorized_keys
-  ansible.builtin.file:
-    path: /home/isucon/.ssh/authorized_keys
-    mode: '0600'
-    state: touch
   become: yes
   become_user: isucon
 
@@ -54,11 +52,17 @@
   become: yes
   become_user: isucon
 
+- name: Gather the contents of the authorized_keys files
+  command: "cat /tmp/k-yomo.keys /tmp/icyflame.keys"
+  register: authorized_keys_contents
+  become: yes
+  become_user: isucon
+
 - name: Copy the SSH keys into the authorized keys file
-  command: "cat /tmp/{{ item }}.keys >> /home/isucon/.ssh/authorized_keys"
-  with_items:
-    - k-yomo
-    - icyflame
+  copy:
+    dest: /home/isucon/.ssh/authorized_keys
+    content: "{{ authorized_keys_contents.stdout }}"
+    mode: '0600'
   become: yes
   become_user: isucon
 
