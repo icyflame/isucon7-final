@@ -1,0 +1,17 @@
+# -*- mode: Yaml; -*-
+# vi: set ts=2 sw=2 sts=0 et:
+
+---
+- name: Run make ensure inside the application
+  command:
+    cmd: make ensure
+    chdir: /home/isucon/isucon-all/webapp/go
+  become: yes
+  become_user: isucon
+
+- name: Build the application
+  command:
+    cmd: make build
+    chdir: /home/isucon/isucon-all/webapp/go
+  become: yes
+  become_user: isucon

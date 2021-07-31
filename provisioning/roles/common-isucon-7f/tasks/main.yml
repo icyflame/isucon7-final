@@ -1,0 +1,12 @@
+# -*- mode: Yaml; -*-
+# vi: set ts=2 sw=2 sts=0 et:
+
+---
+- name: Clone the application repository
+  git:
+    repo: https://github.com/icyflame/isucon7-final
+    dest: /home/isucon/isucon-all
+    version: with-ansible-playbooks
+    update: yes
+  become: yes
+  become_user: isucon

@@ -9,9 +9,11 @@
 
   roles:
     - common
+    - common-isucon-7f
 
 - hosts: webservers
   become: yes
   roles:
     - golang
+    - golang-isucon-7f
     - nginx
