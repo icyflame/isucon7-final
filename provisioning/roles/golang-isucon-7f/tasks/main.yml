@@ -4,7 +4,7 @@
 ---
 - name: Run make ensure inside the application
   command:
-    cmd: make ensure
+    cmd: cd src/app && /home/isucon/go/bin/dep ensure -vendor-only
     chdir: /home/isucon/isucon-all/webapp/go
   environment:
     GOPATH: /home/isucon/isubata/webapp/go/
@@ -15,7 +15,7 @@
 
 - name: Build the application
   command:
-    cmd: make build
+    cmd: /home/isucon/local/go/bin/go build -v app
     chdir: /home/isucon/isucon-all/webapp/go
   environment:
     GOPATH: /home/isucon/isubata/webapp/go/
