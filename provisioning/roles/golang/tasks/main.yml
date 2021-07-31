@@ -1,0 +1,66 @@
+# -*- mode: Yaml; -*-
+# vi: set ts=2 sw=2 sts=0 et:
+
+---
+- name: Check Installed Golang
+  command: /home/isucon/local/go/bin/go version
+  args:
+    chdir: /home/isucon
+  become: yes
+  become_user: isucon
+  register: golang_version_output
+  changed_when: 'golang_version_output.rc != 0'
+  ignore_errors: True
+
+- name: Debug golang_version_output
+  debug:
+    var: golang_version_output
+
+- name: Install Golang
+  command: /home/isucon/xbuild/go-install 1.9.1 ~/local/go
+  args:
+    chdir: /home/isucon
+  environment:
+    MAKEFLAGS: "-j {{ cpu_num.stdout }}"
+  become: yes
+  become_user: isucon
+  when: golang_version_output.rc != 0 or golang_version_output.stdout != "go version go1.9.1 linux/amd64"
+
+- name: Add PATH settings
+  blockinfile:
+    dest: /home/isucon/.profile
+    marker: '# {mark} Ansible Managed Block'
+    block: |
+      export PATH=/home/isucon/local/go/bin:/home/isucon/go/bin:$PATH
+
+- name: Check Installed dep
+  command: /home/isucon/go/bin/dep version
+  args:
+    chdir: /home/isucon
+  become: yes
+  become_user: isucon
+  register: dep_version_output
+  changed_when: dep_version_output.rc != 0
+  ignore_errors: True
+
+- name: Debug dep_version_output
+  debug:
+    var: dep_version_output
+
+- name: Install dep
+  command: /home/isucon/local/go/bin/go get -u github.com/golang/dep/cmd/dep
+  args:
+    chdir: /home/isucon
+  become: yes
+  become_user: isucon
+  when: dep_version_output.rc != 0
+
+- name: Copy golang unit file
+  copy:
+    src: etc/systemd/system/isubata.golang.service
+    dest: /etc/systemd/system/isubata.golang.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - daemon-reload

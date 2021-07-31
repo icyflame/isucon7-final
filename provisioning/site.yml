@@ -1,0 +1,17 @@
+# -*- mode: Yaml; -*-
+# vi: set ts=2 sw=2 sts=0 et:
+
+---
+- hosts: all
+  become: yes
+  # for ansible_env
+  gather_facts: yes
+
+  roles:
+    - common
+
+- hosts: webservers
+  become: yes
+  roles:
+    - golang
+    - nginx

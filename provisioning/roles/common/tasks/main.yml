@@ -1,0 +1,126 @@
+# -*- mode: Yaml; -*-
+# vi: set ts=2 sw=2 sts=0 et:
+
+---
+- name: Create isucon group
+  group:
+    name: isucon
+    gid: 1001
+    state: present
+    system: no
+
+- name: Create isucon user
+  user:
+    name: isucon
+    uid: 1001
+    group: isucon
+    password: isucon
+    home: /home/isucon
+    shell: /bin/bash
+    state: present
+    system: no
+
+- name: Add sudoers
+  copy:
+    content: "isucon  ALL=(ALL) NOPASSWD:ALL\n"
+    dest: /etc/sudoers.d/90-isucon-user
+    owner: root
+    group: root
+    mode: 0440
+
+- name: Create .ssh
+  ansible.builtin.file:
+    path: /home/isucon/.ssh
+    state: directory
+    mode: '0700'
+  become: yes
+  become_user: isucon
+
+- name: Create .ssh/authorized_keys
+  ansible.builtin.file:
+    path: /home/isucon/.ssh/authorized_keys
+    mode: '0600'
+  become: yes
+  become_user: isucon
+
+- name: Download authorized SSH keys from GitHub
+  get_url:
+    url: "https://github.com/{{ item }}.keys"
+    dest: "/tmp/{{ item }}.keys"
+  with_items:
+    - k-yomo
+    - icyflame
+  become: yes
+  become_user: isucon
+
+- name: Copy the SSH keys into the authorized keys file
+  command: "cat /tmp/{{ item }}.keys >> /home/isucon/.ssh/authorized_keys"
+  with_items:
+    - k-yomo
+    - icyflame
+  become: yes
+  become_user: isucon
+
+- name: Setup xbuild
+  git:
+    repo: https://github.com/tagomoris/xbuild.git
+    dest: /home/isucon/xbuild
+    version: master
+  become: yes
+  become_user: isucon
+
+- name: Install Dependencies
+  become: yes
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    name:
+      - ripgrep
+      - silversearcher-ag
+      - jq
+      - vim
+      - curl
+      - re2c
+      - bison
+      - gettext
+      - pkg-config
+      - autoconf
+      - build-essential
+      - libz-dev
+      - libbz2-dev
+      - liblzma-dev
+      - libssl-dev
+      - libmcrypt-dev
+      - libxml2-dev
+      - libsqlite3-dev
+      - libmysqlclient-dev
+      - libreadline-dev
+      - libxslt1-dev
+      - libcurl4-openssl-dev
+      - libjpeg-turbo8-dev
+      - libpng-dev
+      - libtidy-dev
+    state: present
+
+- name: Get number of CPUs
+  command: nproc
+  become: no
+  register: cpu_num
+  changed_when: 'cpu_num.rc != 0'
+
+- name: Clone the application repository
+  git:
+    repo: https://github.com/icyflame/isucon7-qualify
+    dest: /home/isucon/isucon-all
+    version: with-ansible-playbooks
+    update: yes
+  become: yes
+  become_user: isucon
+
+- name: Copy env.sh
+  copy:
+    src: home/isucon/env.sh
+    dest: /home/isucon/env.sh
+    owner: isucon
+    group: isucon
+    mode: 0755
