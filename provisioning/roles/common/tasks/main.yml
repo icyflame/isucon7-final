@@ -28,12 +28,6 @@
     group: root
     mode: 0440
 
-- name: Delete any existing .ssh directory
-  ansible.builtin.file:
-    path: /home/isucon/.ssh
-    state: absent
-  become: yes
-
 - name: Create .ssh
   ansible.builtin.file:
     path: /home/isucon/.ssh
@@ -58,6 +52,8 @@
   become: yes
   become_user: isucon
 
+# ansible.builtin.copy will automatically replace the destination file when the contents of the
+# source are different from the destination.
 - name: Copy the SSH keys into the authorized keys file
   copy:
     dest: /home/isucon/.ssh/authorized_keys
@@ -115,7 +111,7 @@
 
 - name: Clone the application repository
   git:
-    repo: https://github.com/icyflame/isucon7-qualify
+    repo: https://github.com/icyflame/isucon7-final
     dest: /home/isucon/isucon-all
     version: with-ansible-playbooks
     update: yes
