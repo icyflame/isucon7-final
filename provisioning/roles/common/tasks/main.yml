@@ -116,3 +116,5 @@
     owner: isucon
     group: isucon
     mode: 0755
+  tags:
+    - copy-env-file
