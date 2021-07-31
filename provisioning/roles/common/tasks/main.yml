@@ -109,6 +109,14 @@
   register: cpu_num
   changed_when: 'cpu_num.rc != 0'
 
+- name: Copy env.sh
+  copy:
+    src: home/isucon/env.sh
+    dest: /home/isucon/env.sh
+    owner: isucon
+    group: isucon
+    mode: 0755
+
 - name: Clone the application repository
   git:
     repo: https://github.com/icyflame/isucon7-final
@@ -117,11 +125,3 @@
     update: yes
   become: yes
   become_user: isucon
-
-- name: Copy env.sh
-  copy:
-    src: home/isucon/env.sh
-    dest: /home/isucon/env.sh
-    owner: isucon
-    group: isucon
-    mode: 0755
